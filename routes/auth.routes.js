@@ -22,7 +22,7 @@ router.post(
                 message: 'Некорректные данные при регистрации'
             })
         }
-        const {email, password} = req.body;
+        const {firstName, secondName, phone, email, password, position} = req.body;
 
         const candidate = await User.findOne({email});
 
@@ -31,7 +31,7 @@ router.post(
         }
 
         const hashedPassword = await bcrypt.hash(password, 12);
-        const user = new User({email, password: hashedPassword})
+        const user = new User({firstName, secondName, phone, email, password: hashedPassword, position})
 
         await user.save();
 
