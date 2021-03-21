@@ -1,0 +1,6 @@
+{
+  "port": 5000,
+  "mongoUrl": "mongodb://localhost:27017/smart_shelf_db",
+  "jwtSecret": "smart shelf",
+  "baseUrl": "http://localhost:5000"
+}
