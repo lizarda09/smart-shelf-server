@@ -1,11 +1,9 @@
 const {Router} = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const config = require('config');
+const auth = require('../middleware/auth.middleware');
 const Product = require('../models/Product');
 const router = Router();
 
-router.post('/addProducts', async function (req, res){
+router.post('/addProducts', auth, async function (req, res){
     try {
         const { name, price, count } = req.body;
         const date = new Date();
@@ -19,7 +17,7 @@ router.post('/addProducts', async function (req, res){
     }
 });
 
-router.get('/products', async function (req, res) {
+router.get('/products', auth, async function (req, res) {
     try {
         const products = await Product.find({});
         res.status(200).json({products});
@@ -28,11 +26,39 @@ router.get('/products', async function (req, res) {
     }
 });
 
+router.delete('/deleteProductById', auth, async function (req, res){
+    try {
+        const id = req.body;
+        await Product.remove({_id: id});
+        res.status(201).json({message: 'Продукт удален'});
+    } catch (e) {
+        res.status(500).json({message: 'Такого id не существует...'});
+    }
+});
+
+router.put('/updateProductById', auth, async function (req, res){
+    try {
+        const { id, name, price, count } = req.body;
+        await Product.updateOne({_id: id}, { $set: {name: name, price: price, count: count}});
+        res.status(201).json({message: 'Продукт обновлен'});
+    } catch (e) {
+        res.status(500).json({message: 'Такого id не существует...'});
+    }
+});
+
+router.delete('/deleteProductByName', auth, async function (req, res){
+    try {
+        const {name} = req.body;
+        await Product.remove({name});
+        res.status(201).json({message: 'Продукт удален'});
+    } catch (e) {
+        res.status(500).json({message: 'Продукта с таким названием не существует...'});
+    }
+});
+
 router.get('/getProductByDay', async function (req, res) {
     try {
-        const requiredDay = req.body.dateOfReceiving;
-        const product = Product.find({ dateOfReceiving: requiredDay });
-        res.status(200).json({product});
+        //todo
     } catch (e) {
         res.status(500).json({message: 'Что-то пошло не так...'});
     }
