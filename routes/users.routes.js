@@ -5,9 +5,10 @@ const config = require('config');
 const {check, validationResult} = require('express-validator');
 const User = require('../models/User');
 const router = Router();
+const auth = require('../middleware/auth.middleware');
 const {Types} = require('mongoose');
 
-router.get('/users', async function (req, res){
+router.get('/users', auth, async function (req, res){
     try {
         const users = await User.find({});
         res.status(200).json({users});
@@ -16,7 +17,7 @@ router.get('/users', async function (req, res){
     }
 });
 
-router.get('/getUserById', async function (req, res){
+router.get('/getUserById', auth, async function (req, res){
     try {
         const id = req.body.id;
         const user = await User.findOne({_id: id});
@@ -26,7 +27,7 @@ router.get('/getUserById', async function (req, res){
     }
 });
 
-router.get('/getUserByPosition', async function (req, res){
+router.get('/getUserByPosition', auth, async function (req, res){
     try {
         const position = req.body.position;
         const user = await User.find({position: position})
@@ -36,7 +37,7 @@ router.get('/getUserByPosition', async function (req, res){
     }
 });
 
-router.get('/getUserByEmail', async function (req, res){
+router.get('/getUserByEmail', auth, async function (req, res){
     try {
         const email = req.body.email;
         const user = await User.find({email: email});

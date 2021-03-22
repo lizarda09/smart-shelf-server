@@ -5,7 +5,8 @@ const schema = new Schema({
     price: {type: String, required: true},
     count: {type: Number},
     dateOfReceiving: {type: String, required: true},
-    timeOfReceiving: {type: String, required: true}
+    timeOfReceiving: {type: String, required: true},
+    shelfLife: {type: Number}
 });
 
 module.exports = model('Product', schema);

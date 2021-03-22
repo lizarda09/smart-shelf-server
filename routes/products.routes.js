@@ -5,11 +5,11 @@ const router = Router();
 
 router.post('/addProducts', auth, async function (req, res){
     try {
-        const { name, price, count } = req.body;
+        const { name, price, count, shelfLife} = req.body;
         const date = new Date();
         const dateOfReceiving = `${date.getDate()}.${date.getMonth()+1}.${date.getFullYear()}`;
         const timeOfReceiving = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-        const product = new Product({ name, price, count, dateOfReceiving, timeOfReceiving });
+        const product = new Product({ name, price, count, dateOfReceiving, timeOfReceiving, shelfLife });
         await product.save();
         res.status(201).json({message: 'Продукт добавлен!'});
     } catch (e) {
