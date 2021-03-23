@@ -8,7 +8,7 @@ const router = Router();
 const auth = require('../middleware/auth.middleware');
 const {Types} = require('mongoose');
 
-router.get('/users', auth, async function (req, res){
+router.get('/', auth, async function (req, res){
     try {
         const users = await User.find({});
         res.status(200).json({users});
@@ -17,10 +17,11 @@ router.get('/users', auth, async function (req, res){
     }
 });
 
-router.get('/getUserById', auth, async function (req, res){
+router.get('/:id', auth, async function (req, res){
     try {
-        const id = req.body.id;
-        const user = await User.findOne({_id: id});
+        const id = req.params.id;
+        const user = await User.findById(id);
+        //const user = await User.findOne({_id: id});
         res.status(200).json({user});
     } catch (e) {
         res.status(500).json({message: 'Пользователь не найден...'});
@@ -31,7 +32,7 @@ router.get('/getUserByPosition', auth, async function (req, res){
     try {
         const position = req.body.position;
         const user = await User.find({position: position})
-        res.status(200).json({user});
+        res.status(200).json(user);
     } catch (e) {
         res.status(500).json({message: 'Пользователь с такой ролью не найден...'});
     }

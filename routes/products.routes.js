@@ -17,7 +17,7 @@ router.post('/addProducts', auth, async function (req, res){
     }
 });
 
-router.get('/products', auth, async function (req, res) {
+router.get('/', auth, async function (req, res) {
     try {
         const products = await Product.find({});
         res.status(200).json({products});
@@ -26,19 +26,21 @@ router.get('/products', auth, async function (req, res) {
     }
 });
 
-router.delete('/deleteProductById', auth, async function (req, res){
+router.delete('/:id', auth, async function (req, res){
     try {
-        const id = req.body;
-        await Product.remove({_id: id});
+        const id = req.params.id;
+        await Product.findByIdAndDelete(id);
+        //await Product.remove({_id: id});
         res.status(201).json({message: 'Продукт удален'});
     } catch (e) {
         res.status(500).json({message: 'Такого id не существует...'});
     }
 });
 
-router.put('/updateProductById', auth, async function (req, res){
+router.put('/:id', auth, async function (req, res){
     try {
-        const { id, name, price, count } = req.body;
+        const id = req.params.id;
+        const { name, price, count } = req.body;
         await Product.updateOne({_id: id}, { $set: {name: name, price: price, count: count}});
         res.status(201).json({message: 'Продукт обновлен'});
     } catch (e) {
@@ -46,7 +48,7 @@ router.put('/updateProductById', auth, async function (req, res){
     }
 });
 
-router.delete('/deleteProductByName', auth, async function (req, res){
+router.delete('/deleteProductById', async function (req, res){
     try {
         const {name} = req.body;
         await Product.remove({name});
@@ -59,6 +61,7 @@ router.delete('/deleteProductByName', auth, async function (req, res){
 router.get('/getProductByDay', async function (req, res) {
     try {
         //todo
+        res.status(202).json(products);
     } catch (e) {
         res.status(500).json({message: 'Что-то пошло не так...'});
     }

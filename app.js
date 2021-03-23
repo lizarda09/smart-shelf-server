@@ -28,10 +28,10 @@ const app = express();
 
 app.use(express.json({ extended: true} ));
 app.use('/api/auth', require('./routes/auth.routes'));
-app.use('/api/link', require('./routes/links.routes'));
-app.use('/api', require('./routes/users.routes'));
-app.use('/api', require('./routes/products.routes'));
-app.use('/api', require('./routes/shelf.routes'));
+//app.use('/api/link', require('./routes/links.routes'));
+app.use('/api/user', require('./routes/users.routes'));
+app.use('/api/product', require('./routes/products.routes'));
+app.use('/api/shelf', require('./routes/shelf.routes'));
 
 const PORT = config.get('port') || 4000;
 
