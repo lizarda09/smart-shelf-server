@@ -4,8 +4,9 @@ const schema = new Schema({
     name: {type: String, required: true},
     price: {type: String, required: true},
     count: {type: Number},
-    dateOfReceiving: {type: String, required: true},
-    timeOfReceiving: {type: String, required: true},
+    discount: {type: Number, min: 0, max: 100, default: 0},
+    dateOfManufacture: {type: String, required: true},
+    dateOfReceiving: {type: Date, required: true},
     shelfLife: {type: Number}
 });
 

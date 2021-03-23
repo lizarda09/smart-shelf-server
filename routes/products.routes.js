@@ -3,15 +3,44 @@ const auth = require('../middleware/auth.middleware');
 const Product = require('../models/Product');
 const router = Router();
 
-router.post('/addProducts', auth, async function (req, res){
+router.post('/add', async function (req, res){
     try {
-        const { name, price, count, shelfLife} = req.body;
+        const { name, price, count, discount, dateOfManufacture, shelfLife} = req.body;
         const date = new Date();
-        const dateOfReceiving = `${date.getDate()}.${date.getMonth()+1}.${date.getFullYear()}`;
-        const timeOfReceiving = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-        const product = new Product({ name, price, count, dateOfReceiving, timeOfReceiving, shelfLife });
+        //const dateOfReceiving = `${date.getDate()}.${date.getMonth()+1}.${date.getFullYear()}`;
+        const dateOfReceiving = new Date();
+        const product = new Product({ name, price, count, discount, dateOfManufacture, dateOfReceiving, shelfLife });
         await product.save();
         res.status(201).json({message: 'Продукт добавлен!'});
+    } catch (e) {
+        res.status(500).json({message: 'Что-то пошло не так...'});
+    }
+});
+
+router.post('/:id/checkDiscount', async function (req, res){
+    try {
+        const id = req.params.id;
+        const product = await Product.findById(id);
+        const {dateOfManufacture, shelfLife} = product;
+        const today = new Date();
+        const arrDateOfManufacture = dateOfManufacture.split('-');
+        const dayOfExpiration = +arrDateOfManufacture[2] + (shelfLife/24);
+        const dateOfExpiration = new Date(Date.parse(`${+arrDateOfManufacture[0]}-${+arrDateOfManufacture[1]}-${dayOfExpiration + 1}`));
+        const diff = Math.round((dateOfExpiration - today)/(1000*60*60*24));
+        switch (diff) {
+            case 0:
+                res.status(200).json({message: 'скидка 50%'});
+                break;
+            case 1:
+                res.status(200).json({message: 'скидка 30%'});
+                break;
+            case 2:
+                res.status(200).json({message: 'скидка 15%'});
+                break;
+            case 3:
+                res.status(200).json({message: 'скидка 10%'});
+                break;
+        }
     } catch (e) {
         res.status(500).json({message: 'Что-то пошло не так...'});
     }
@@ -40,15 +69,15 @@ router.delete('/:id', auth, async function (req, res){
 router.put('/:id', auth, async function (req, res){
     try {
         const id = req.params.id;
-        const { name, price, count } = req.body;
-        await Product.updateOne({_id: id}, { $set: {name: name, price: price, count: count}});
+        const { name, price, count, discount } = req.body;
+        await Product.updateOne({_id: id}, { $set: {name: name, price: price, count: count, discount: discount}});
         res.status(201).json({message: 'Продукт обновлен'});
     } catch (e) {
         res.status(500).json({message: 'Такого id не существует...'});
     }
 });
 
-router.delete('/deleteProductById', async function (req, res){
+router.delete('/deleteProductByName', async function (req, res){
     try {
         const {name} = req.body;
         await Product.remove({name});

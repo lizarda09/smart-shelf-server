@@ -29,7 +29,7 @@ router.get('/:id', async function (req, res){
         const shelf = await Shelf.findById(id);
         res.status(201).json({shelf});
     } catch (e) {
-        res.status(500).json({message: 'Продукта с таким id нет'});
+        res.status(500).json({message: 'Полки с таким id нет'});
     }
 });
 

@@ -28,7 +28,7 @@ router.get('/:id', auth, async function (req, res){
     }
 });
 
-router.get('/getUserByPosition', auth, async function (req, res){
+router.get('/getByPosition', auth, async function (req, res){
     try {
         const position = req.body.position;
         const user = await User.find({position: position})
@@ -38,7 +38,7 @@ router.get('/getUserByPosition', auth, async function (req, res){
     }
 });
 
-router.get('/getUserByEmail', auth, async function (req, res){
+router.get('/getByEmail', auth, async function (req, res){
     try {
         const email = req.body.email;
         const user = await User.find({email: email});
