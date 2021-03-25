@@ -10,7 +10,7 @@ const auth = require('../middleware/auth.middleware');
 const {Types} = require('mongoose');
 
 
-router.put('/add', async function (req, res){
+router.patch('/add', async function (req, res){
     try {
         const { name: nameOfSale, count: countOfProduct } = req.body;
         const purchaseDate = new Date();
@@ -20,6 +20,15 @@ router.put('/add', async function (req, res){
         const { count: countFromProductDoc } = product;
         await Product.updateOne({name: nameOfSale}, { $set: {count: countFromProductDoc - countOfProduct}});
         res.status(201).json({message: 'Продукт добавлен в продажи!' });
+    } catch (e) {
+        res.status(500).json({message: 'Что-то пошло не так...'});
+    }
+});
+
+router.get('/', async function (req, res){
+    try {
+        const sales = await Sale.find({});
+        res.status(201).json({ sales });
     } catch (e) {
         res.status(500).json({message: 'Что-то пошло не так...'});
     }
