@@ -1,16 +1,11 @@
 const {Router} = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const config = require('config');
-const {check, validationResult} = require('express-validator');
 const Product = require('../models/Product');
 const Sale = require('../models/Sale');
 const router = Router();
 const auth = require('../middleware/auth.middleware');
-const {Types} = require('mongoose');
 
 
-router.patch('/add', async function (req, res){
+router.put('/add', auth, async function (req, res){
     try {
         const { name: nameOfSale, count: countOfProduct } = req.body;
         const purchaseDate = new Date();
@@ -25,7 +20,7 @@ router.patch('/add', async function (req, res){
     }
 });
 
-router.get('/', async function (req, res){
+router.get('/', auth, async function (req, res){
     try {
         const sales = await Sale.find({});
         res.status(201).json({ sales });

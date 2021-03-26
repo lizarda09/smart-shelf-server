@@ -1,12 +1,7 @@
 const {Router} = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const config = require('config');
-const {check, validationResult} = require('express-validator');
 const User = require('../models/User');
 const router = Router();
 const auth = require('../middleware/auth.middleware');
-const {Types} = require('mongoose');
 
 router.get('/', auth, async function (req, res){
     try {
@@ -17,21 +12,11 @@ router.get('/', auth, async function (req, res){
     }
 });
 
-router.get('/:id', auth, async function (req, res){
-    try {
-        const id = req.params.id;
-        const user = await User.findById(id);
-        //const user = await User.findOne({_id: id});
-        res.status(200).json({user});
-    } catch (e) {
-        res.status(500).json({message: 'Пользователь не найден...'});
-    }
-});
 
 router.get('/getByPosition', auth, async function (req, res){
     try {
         const position = req.body.position;
-        const user = await User.find({position: position})
+        const user = await User.find({position})
         res.status(200).json(user);
     } catch (e) {
         res.status(500).json({message: 'Пользователь с такой ролью не найден...'});
@@ -45,6 +30,17 @@ router.get('/getByEmail', auth, async function (req, res){
         res.status(200).json({user});
     } catch (e) {
         res.status(500).json({message: 'Пользователь с такой почтой не найден...'});
+    }
+});
+
+router.get('/:id', auth, async function (req, res){
+    try {
+        const id = req.params.id;
+        const user = await User.findById(id);
+        //const user = await User.findOne({_id: id});
+        res.status(200).json({user});
+    } catch (e) {
+        res.status(500).json({message: 'Пользователь не найден...'});
     }
 });
 
