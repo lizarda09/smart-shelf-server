@@ -3,6 +3,7 @@ const auth = require('../middleware/auth.middleware');
 const Product = require('../models/Product');
 const calculateDiscount = require('../businessLogic/discounts');
 const router = Router();
+const Role = require('../models/Role')
 
 router.post('/add', auth, async function (req, res){
     try {

@@ -5,8 +5,8 @@ const router = Router();
 
 router.post('/add', auth, async function (req, res){
     try {
-        const {products} = req.body;
-        const shelf = new Shelf({products});
+        const {products, name} = req.body;
+        const shelf = new Shelf({products, name});
         await shelf.save();
         res.status(200).json({message: 'Продукты на полку добавлены'});
     } catch (e) {
@@ -46,8 +46,8 @@ router.delete('/:id', auth, async function (req, res){
 router.put('/:id', auth, async function (req, res){
     try {
         const id = req.params.id;
-        const { products } = req.body;
-        await Shelf.updateOne({_id: id}, { $set: { products: products }});
+        const { products, name } = req.body;
+        await Shelf.updateOne({_id: id}, { $set: { products: products, name: name }});
         res.status(201).json({message: 'Продукты на полке обновлены'});
     } catch (e) {
         res.status(500).json({message: 'error'});

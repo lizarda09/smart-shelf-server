@@ -4,7 +4,16 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 const {check, validationResult} = require('express-validator');
 const User = require('../models/User');
+const Role = require('../models/Role');
 const router = Router();
+
+const generateAccessToken = (userId, position) => {
+    const payload = {
+        userId,
+        position
+    }
+    return jwt.sign(payload, config.get('jwtSecret'),{ expiresIn: '1h'})
+}
 
 router.post(
     '/register',
@@ -22,7 +31,7 @@ router.post(
                 message: 'Некорректные данные при регистрации'
             })
         }
-        const {firstName, secondName, phone, email, password, position} = req.body;
+        const {firstName, secondName, phone, email, password} = req.body;
 
         const candidate = await User.findOne({email});
 
@@ -31,8 +40,8 @@ router.post(
         }
 
         const hashedPassword = await bcrypt.hash(password, 12);
-        const user = new User({firstName, secondName, phone, email, password: hashedPassword, position})
-
+        const userRole = await Role.findOne({value: 'SELLER'});
+        const user = new User({firstName, secondName, phone, email, password: hashedPassword, position: [userRole.value]})
         await user.save();
 
         res.status(201).json({message: 'Пользователь создан!'});
@@ -73,13 +82,9 @@ router.post(
                 return res.status(400).json({message: 'Неверный пароль, попробуйде снова'})
             }
 
-            const token = jwt.sign(
-                {userId: user.id},
-                config.get('jwtSecret'),
-                { expiresIn: '1h'}
-            )
+            const token = generateAccessToken(user._id, user.position)
 
-            res.json({ token, userId: user.id });
+            res.json({ token });
 
         } catch (e) {
             res.status(500).json({message: 'Что-то пошло не так...'});
